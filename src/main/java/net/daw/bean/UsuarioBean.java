@@ -5,77 +5,103 @@
  */
 package net.daw.bean;
 
+import com.google.gson.annotations.Expose;
+
 /**
  *
  * @author jesus
  */
 public class UsuarioBean {
 
-    private int id,id_tipoUsuario;
-    private String dni, nombre, ape1, ape2, login, pass;
+	@Expose
+	private int id;
+	@Expose
+	private String dni;
+	@Expose
+	private String nombre;
+	@Expose
+	private String ape1;
+	@Expose
+	private String ape2;
+	@Expose
+	private String login;
+	@Expose
+	private String pass;
+	@Expose(serialize=false)
+	private int id_tipoUsuario;
+	@Expose(deserialize=false)
+	private TipousuarioBean tipoUsuario;
+	
+	public TipousuarioBean getTipoUsuario() {
+		return tipoUsuario;
+	}
 
-    public int getId() {
-        return id;
-    }
+	public void setTipoUsuario(TipousuarioBean tipoUsuario) {
+		this.tipoUsuario = tipoUsuario;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public String getDni() {
-        return dni;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public void setDni(String dni) {
-        this.dni = dni;
-    }
+	public String getDni() {
+		return dni;
+	}
 
-    public String getNombre() {
-        return nombre;
-    }
+	public void setDni(String dni) {
+		this.dni = dni;
+	}
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+	public String getNombre() {
+		return nombre;
+	}
 
-    public String getApe1() {
-        return ape1;
-    }
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
 
-    public void setApe1(String ape1) {
-        this.ape1 = ape1;
-    }
+	public String getApe1() {
+		return ape1;
+	}
 
-    public String getApe2() {
-        return ape2;
-    }
+	public void setApe1(String ape1) {
+		this.ape1 = ape1;
+	}
 
-    public void setApe2(String ape2) {
-        this.ape2 = ape2;
-    }
+	public String getApe2() {
+		return ape2;
+	}
 
-    public String getLogin() {
-        return login;
-    }
+	public void setApe2(String ape2) {
+		this.ape2 = ape2;
+	}
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
+	public String getLogin() {
+		return login;
+	}
 
-    public String getPass() {
-        return pass;
-    }
+	public void setLogin(String login) {
+		this.login = login;
+	}
 
-    public void setPass(String pass) {
-        this.pass = pass;
-    }
+	public String getPass() {
+		return pass;
+	}
 
-    public int getId_tipoUsuario() {
-        return id_tipoUsuario;
-    }
+	public void setPass(String pass) {
+		this.pass = pass;
+	}
 
-    public void setId_tipoUsuario(int id_tipoUsuario) {
-        this.id_tipoUsuario = id_tipoUsuario;
-    }
+	public int getId_tipoUsuario() {
+		return id_tipoUsuario;
+	}
+
+	public void setId_tipoUsuario(int id_tipoUsuario) {
+		this.id_tipoUsuario = id_tipoUsuario;
+	}
 
 }

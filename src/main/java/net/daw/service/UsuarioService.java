@@ -6,18 +6,24 @@
 package net.daw.service;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
 import net.daw.bean.ReplyBean;
 import net.daw.bean.UsuarioBean;
 import net.daw.connection.publicinterface.ConnectionInterface;
 import net.daw.constant.ConnectionConstants;
+import net.daw.dao.TipousuarioDao;
 import net.daw.dao.UsuarioDao;
 import net.daw.factory.ConnectionFactory;
 import net.daw.helper.EncodingHelper;
+import net.daw.helper.ParameterCook;
 
 /**
  *
@@ -160,11 +166,19 @@ public class UsuarioService {
         try {
             Integer iRpp = Integer.parseInt(oRequest.getParameter("rpp"));
             Integer iPage = Integer.parseInt(oRequest.getParameter("page"));
+            HashMap<String, String> hmOrder = ParameterCook.getOrderParams(oRequest.getParameter("order"));
             oConnectionPool = ConnectionFactory.getConnection(ConnectionConstants.connectionPool);
             oConnection = oConnectionPool.newConnection();
             UsuarioDao oUsuarioDao = new UsuarioDao(oConnection, ob);
-            ArrayList<UsuarioBean> alUsuarioBean = oUsuarioDao.getpage(iRpp, iPage);
-            Gson oGson = new Gson();
+//            TipousuarioDao oTipousuarioDao = new TipousuarioDao(oConnection, "tipousuario");
+            ArrayList<UsuarioBean> alUsuarioBean = oUsuarioDao.getpage(iRpp, iPage, hmOrder);
+ 
+//            for(UsuarioBean d : alUsuarioBean) {
+//            	d.setTipoUsuario(oTipousuarioDao.get(d.getId_tipoUsuario()));
+//            }
+            
+            // Gson oGson = (new GsonBuilder()).excludeFieldsWithoutExposeAnnotation().create(); -- con .excludeFieldsWithoutExposeAnnotation() no guarda el id en el objeto tipousuario
+            Gson oGson = (new GsonBuilder()).create();
             oReplyBean = new ReplyBean(200, oGson.toJson(alUsuarioBean));
         } catch (Exception ex) {
             oReplyBean = new ReplyBean(500,

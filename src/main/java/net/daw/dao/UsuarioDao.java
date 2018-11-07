@@ -10,7 +10,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import net.daw.bean.TipousuarioBean;
 import net.daw.bean.UsuarioBean;
+import net.daw.helper.SqlBuilder;
 
 /**
  *
@@ -166,43 +170,48 @@ public class UsuarioDao {
         return iResult;
     }
 
-    public ArrayList<UsuarioBean> getpage(int iRpp, int iPage) throws Exception {
-        String strSQL = "SELECT * FROM " + ob;
-        ArrayList<UsuarioBean> alUsuarioBean;
-        if (iRpp > 0 && iRpp < 100000 && iPage > 0 && iPage < 100000000) {
-            strSQL += " LIMIT " + (iPage - 1) * iRpp + ", " + iRpp;
-            ResultSet oResultSet = null;
-            PreparedStatement oPreparedStatement = null;
-            try {
-                oPreparedStatement = oConnection.prepareStatement(strSQL);
-                oResultSet = oPreparedStatement.executeQuery();
-                alUsuarioBean = new ArrayList<UsuarioBean>();
-                while (oResultSet.next()) {
-                    UsuarioBean oUsuarioBean = new UsuarioBean();
-                    oUsuarioBean.setId(oResultSet.getInt("id"));
-                    oUsuarioBean.setDni(oResultSet.getString("dni"));
-                    oUsuarioBean.setNombre(oResultSet.getString("nombre"));
-                    oUsuarioBean.setApe1(oResultSet.getString("ape1"));
-                    oUsuarioBean.setApe2(oResultSet.getString("ape2"));
-                    oUsuarioBean.setLogin(oResultSet.getString("login"));
-                    oUsuarioBean.setPass(oResultSet.getString("pass"));
-                    oUsuarioBean.setId_tipoUsuario(oResultSet.getInt("id_tipoUsuario"));
-                    alUsuarioBean.add(oUsuarioBean);
-                }
-            } catch (SQLException e) {
-                throw new Exception("Error en Dao getpage de " + ob , e);
-            } finally {
-                if (oResultSet != null) {
-                    oResultSet.close();
-                }
-                if (oPreparedStatement != null) {
-                    oPreparedStatement.close();
-                }
-            }
-        } else {
-            throw new Exception("Error en Dao getpage de " + ob);
-        }
-        return alUsuarioBean;
+    public ArrayList<UsuarioBean> getpage(int iRpp, int iPage, HashMap<String, String> hmOrder) throws Exception {
+		String strSQL = "SELECT * FROM " + ob;
+		strSQL += SqlBuilder.buildSqlOrder(hmOrder);
+		ArrayList<UsuarioBean> alUsuarioBean;
+		if (iRpp > 0 && iRpp < 100000 && iPage > 0 && iPage < 100000000) {
+			strSQL += " LIMIT " + (iPage - 1) * iRpp + ", " + iRpp;
+			ResultSet oResultSet = null;
+			PreparedStatement oPreparedStatement = null;
+			try {
+				oPreparedStatement = oConnection.prepareStatement(strSQL);
+				oResultSet = oPreparedStatement.executeQuery();
+				alUsuarioBean = new ArrayList<UsuarioBean>();
+				TipousuarioDao oTipousuarioDao = new TipousuarioDao(oConnection, "tipousuario");
+				while (oResultSet.next()) {
+					UsuarioBean oUsuarioBean = new UsuarioBean();
+					TipousuarioBean oTipousuarioBean = new TipousuarioBean();
+					oUsuarioBean.setId(oResultSet.getInt("id"));
+					oUsuarioBean.setDni(oResultSet.getString("dni"));
+					oUsuarioBean.setNombre(oResultSet.getString("nombre"));
+					oUsuarioBean.setApe1(oResultSet.getString("ape1"));
+					oUsuarioBean.setApe2(oResultSet.getString("ape2"));
+					oUsuarioBean.setLogin(oResultSet.getString("login"));
+					oUsuarioBean.setPass(null);
+					oUsuarioBean.setId_tipoUsuario(oResultSet.getInt("id_tipoUsuario"));
+					oTipousuarioBean = oTipousuarioDao.get(oResultSet.getInt("id_tipoUsuario")); // ¿Está bien llamar a un dao desde otro dao?
+					oUsuarioBean.setTipoUsuario(oTipousuarioBean);
+					alUsuarioBean.add(oUsuarioBean);
+				}
+			} catch (SQLException e) {
+				throw new Exception("Error en Dao getpage de " + ob, e);
+			} finally {
+				if (oResultSet != null) {
+					oResultSet.close();
+				}
+				if (oPreparedStatement != null) {
+					oPreparedStatement.close();
+				}
+			}
+		} else {
+			throw new Exception("Error en Dao getpage de " + ob);
+		}
+		return alUsuarioBean;
 
-    }
+	}
 }

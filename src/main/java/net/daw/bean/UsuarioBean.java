@@ -7,10 +7,6 @@ package net.daw.bean;
 
 import com.google.gson.annotations.Expose;
 
-/**
- *
- * @author jesus
- */
 public class UsuarioBean {
 
 	@Expose

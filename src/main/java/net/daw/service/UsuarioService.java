@@ -15,20 +15,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
+
+import net.daw.bean.ProductoBean;
 import net.daw.bean.ReplyBean;
 import net.daw.bean.UsuarioBean;
 import net.daw.connection.publicinterface.ConnectionInterface;
 import net.daw.constant.ConnectionConstants;
+import net.daw.dao.ProductoDao;
 import net.daw.dao.TipousuarioDao;
 import net.daw.dao.UsuarioDao;
 import net.daw.factory.ConnectionFactory;
 import net.daw.helper.EncodingHelper;
 import net.daw.helper.ParameterCook;
 
-/**
- *
- * @author jesus
- */
+
 public class UsuarioService {
 
     HttpServletRequest oRequest;
@@ -177,8 +177,8 @@ public class UsuarioService {
 //            	d.setTipoUsuario(oTipousuarioDao.get(d.getId_tipoUsuario()));
 //            }
             
-            // Gson oGson = (new GsonBuilder()).excludeFieldsWithoutExposeAnnotation().create(); -- con .excludeFieldsWithoutExposeAnnotation() no guarda el id en el objeto tipousuario
-            Gson oGson = (new GsonBuilder()).create();
+            Gson oGson = (new GsonBuilder()).excludeFieldsWithoutExposeAnnotation().create();
+            // Gson oGson = (new GsonBuilder()).create();
             oReplyBean = new ReplyBean(200, oGson.toJson(alUsuarioBean));
         } catch (Exception ex) {
             oReplyBean = new ReplyBean(500,
@@ -189,5 +189,31 @@ public class UsuarioService {
 
         return oReplyBean;
 
+    }
+    
+    public ReplyBean cargarUsuarios() throws Exception {
+        ReplyBean oReplyBean;
+        ConnectionInterface oConnectionPool = null;
+        Connection oConnection;
+        RellenarService rellenar = new RellenarService();
+        try {
+            Integer numero = Integer.parseInt(oRequest.getParameter("num"));            
+            oConnectionPool = ConnectionFactory.getConnection(ConnectionConstants.connectionPool);
+            oConnection = oConnectionPool.newConnection();
+            UsuarioDao oUsuarioDao = new UsuarioDao(oConnection, ob);
+            ArrayList<UsuarioBean> alUsuarioBean = rellenar.fillUsuario(numero);
+            
+            for(UsuarioBean usuario : alUsuarioBean){
+                oUsuarioDao.create(usuario);
+            }            
+            Gson oGson = new Gson();
+            oReplyBean = new ReplyBean(200, oGson.toJson(alUsuarioBean));
+        } catch (Exception ex) {
+            oReplyBean = new ReplyBean(500,
+                    "ERROR: " + EncodingHelper.escapeQuotes(EncodingHelper.escapeLine(ex.getMessage())));
+        } finally {
+            oConnectionPool.disposeConnection();
+        }
+        return oReplyBean;
     }
 }

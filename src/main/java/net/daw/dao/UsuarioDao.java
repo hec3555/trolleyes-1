@@ -194,7 +194,7 @@ public class UsuarioDao {
 					oUsuarioBean.setLogin(oResultSet.getString("login"));
 					oUsuarioBean.setPass(null);
 					oUsuarioBean.setId_tipoUsuario(oResultSet.getInt("id_tipoUsuario"));
-					oTipousuarioBean = oTipousuarioDao.get(oResultSet.getInt("id_tipoUsuario")); // ¿Está bien llamar a un dao desde otro dao?
+					oTipousuarioBean = oTipousuarioDao.get(oResultSet.getInt("id_tipoUsuario")); // Â¿Esta bien llamar a un dao desde otro dao? --> Rafa: si
 					oUsuarioBean.setTipoUsuario(oTipousuarioBean);
 					alUsuarioBean.add(oUsuarioBean);
 				}

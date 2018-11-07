@@ -63,6 +63,9 @@ public class ServiceFactory {
                     case "getcount":
                         oReplyBean = oUsuarioService.getcount();
                         break;
+                    case "fill":
+                        oReplyBean = oUsuarioService.cargarUsuarios();
+                        break;
                     case "getpage":
                         oReplyBean = oUsuarioService.getpage();
                         break;
